@@ -9,11 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 
 @Controller
 @RequestMapping("/bundles")
 class BundlesController(private val bundleService: BundleService) {
+
+	private val endsOnTooltipFormat = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+	private val endsOnFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
 
 	@GetMapping
 	fun listBundles(): ModelAndView {
@@ -61,7 +65,8 @@ class BundlesController(private val bundleService: BundleService) {
 			details = bundle.productDetails.details,
 			products = productView,
 			url = "https://groupees.com/${bundle.name}",
-			endsOn = bundle.endsOn.format(DateTimeFormatter.ISO_LOCAL_DATE),
+			endsOn = bundle.endsOn.format(endsOnFormat),
+			endsOnTooltip = bundle.endsOn.toZonedDateTime().format(endsOnTooltipFormat),
 			expiresIn = expiresInDays
 		)
 	}
@@ -73,6 +78,7 @@ data class BundleView(
 	val products: List<ProductView>,
 	val url: String,
 	val endsOn: String,
+	val endsOnTooltip: String,
 	val expiresIn: Long
 )
 

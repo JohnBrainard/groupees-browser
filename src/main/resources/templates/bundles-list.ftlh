@@ -5,7 +5,6 @@
 	<title>Bundles</title>
 
 	<style>
-
         body {
             background-color: black;
             color: chartreuse;
@@ -36,17 +35,42 @@
         }
 
         table.bundles {
-	        width: 100%;
+            width: 100%;
         }
 
         table.bundles thead {
-	        font-size: 1.2rem;
-	        text-align: left;
+            font-size: 1.2rem;
+            text-align: left;
         }
 
         table.bundles tbody td {
-	        border-top: 1px dotted #537f38;
+            border-top: 1px dotted #537f38;
         }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+
 	</style>
 </head>
 <body>
@@ -85,8 +109,12 @@
 					<span>${product.icon?no_esc}</span>
                 </#list>
 			</td>
-			<td>${bundle.endsOn}
-				<span class="expires-in">(${bundle.expiresIn} days)</span>
+			<td>
+				<span class="tooltip">
+					<span class="tooltiptext">${bundle.endsOnTooltip}</span>
+					${bundle.endsOn}
+					<span class="expires-in">(${bundle.expiresIn} days)</span>
+				</span>
 			</td>
 		</tr>
     </#list>
