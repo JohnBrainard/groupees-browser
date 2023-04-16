@@ -4,8 +4,7 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import dev.johnbrainard.groupees.groupeesbrowser.Bundle
-import dev.johnbrainard.groupees.groupeesbrowser.Product
-import dev.johnbrainard.groupees.groupeesbrowser.ProductDetails
+import dev.johnbrainard.groupees.groupeesbrowser.Platform
 import dev.johnbrainard.groupees.groupeesbrowser.groupees.GroupeesPage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -49,28 +48,22 @@ class BundleService {
 			Bundle(
 				bundleElement.title,
 				name = bundleElement.name,
-				endsOn = Instant.ofEpochSecond(bundleElement.endsOn.toLong())
+				endsOn = Instant.ofEpochSecond(bundleElement.endsOn?.toLong() ?: 0)
 					.atZone(ZoneOffset.systemDefault())
 					.toOffsetDateTime(),
-				productDetails = createProductDetails(bundleElement.product)
+				platform = bundleElement.platform?.let { resolvePlatform(it) } ?: Platform.OTHER,
+				details = bundleElement.productDetails
 			)
 		}.also {
 			logger.info("found ${it.size} bundles")
 		}
 	}
 
-	private fun createProductDetails(productElement: GroupeesPage.ProductElement): ProductDetails {
-		val products = setOfNotNull(
-			productElement.album?.let { Product.Album(it) },
-			productElement.comics?.let { Product.Comics(it) },
-			productElement.ebooks?.let { Product.Ebooks(it) },
-			productElement.game?.let { Product.Game(it) },
-			productElement.royaltyFree?.let { Product.RoyaltyFree(it) }
-		)
-
-		return ProductDetails(
-			productElement.details,
-			products
-		)
+	private fun resolvePlatform(platform: String): Platform = when {
+		platform.contains("steam", ignoreCase = true) -> Platform.STEAM
+		platform.contains("itch.io", ignoreCase = true) -> Platform.ITCH_IO
+		platform.contains("pdf", ignoreCase = true) -> Platform.PDF
+		platform.contains("bandcamp", ignoreCase = true) -> Platform.BANDCAMP
+		else -> Platform.OTHER
 	}
 }

@@ -78,10 +78,10 @@
 <nav>
 	<ol>
 		<li><a href="/bundles">All Bundle Types</a></li>
-		<li><a href="/bundles/music">Music</a></li>
-		<li><a href="/bundles/games">Games</a></li>
-		<li><a href="/bundles/ebooks">Ebooks</a></li>
-		<li><a href="/bundles/comics">Comics</a></li>
+		<li><a href="/bundles/bandcamp">Music</a></li>
+		<li><a href="/bundles/itchio">Games</a></li>
+		<li><a href="/bundles/pdf">PDF</a></li>
+		<li><a href="/bundles/other">Other</a></li>
 	</ol>
 </nav>
 
@@ -90,6 +90,7 @@
 	<tr>
 		<th>Title</th>
 		<th>Details</th>
+		<th>Platform</th>
 		<th>Ends On</th>
 		<th>&nbsp;</th>
 	</tr>
@@ -105,9 +106,9 @@
 			</td>
 			<td>
                 ${bundle.details}
-                <#list bundle.products as product>
-					<span>${product.icon?no_esc}</span>
-                </#list>
+			</td>
+			<td>
+                ${bundle.platform}
 			</td>
 			<td>
 				<span class="tooltip">

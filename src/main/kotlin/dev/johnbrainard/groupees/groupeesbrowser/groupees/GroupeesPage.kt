@@ -29,38 +29,15 @@ class GroupeesPage private constructor(private val document: Document) {
 			get() = element.selectFirst(".bundle-info h2")
 				?.text()!!
 
-		val endsOn: String
+		val endsOn: String?
 			get() = element.selectFirst(".time")
-				?.attr("data-final-time")!!
+				?.attr("data-final-time")
 
-		val product: ProductElement
-			get() = element.selectFirst(".products")
-				?.let { ProductElement(it) }!!
-
-	}
-
-	class ProductElement internal constructor(private val element: Element) {
-		val details: String
-			get() = element.wholeText()
-
-		val album: String?
-			get() = element.selectFirst(".g-icon-album")
+		val platform: String?
+			get() = element.selectFirst(".platforms-list img")
 				?.attr("title")
 
-		val game: String?
-			get() = element.selectFirst(".g-icon-game")
-				?.attr("title")
-
-		val comics: String?
-			get() = element.selectFirst(".g-icon-comics")
-				?.attr("title")
-
-		val ebooks: String?
-			get() = element.selectFirst(".g-icon-ebooks")
-				?.attr("title")
-
-		val royaltyFree: String?
-			get() = element.selectFirst(".icon-royalty-free")
-				?.attr("title")
+		val productDetails: String?
+			get() = element.selectFirst(".products")?.text()
 	}
 }

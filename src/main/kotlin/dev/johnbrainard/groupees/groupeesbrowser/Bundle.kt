@@ -6,17 +6,18 @@ data class Bundle(
 	val title: String,
 	val name: String,
 	val endsOn: OffsetDateTime,
-	val productDetails: ProductDetails
+	val platform: Platform,
+	val details: String?
 )
 
-data class ProductDetails(val details: String, val products: Set<Product>)
+enum class Platform(val label: String, val id: String) {
+	STEAM("Steam", "steam"),
+	ITCH_IO("Itch.io", "itchio"),
+	BANDCAMP("Bandcamp", "bandcamp"),
+	PDF("PDF", "pdf"),
+	OTHER("Other", "other");
 
-sealed interface Product {
-	val title: String
-
-	class Album(override val title: String) : Product
-	class RoyaltyFree(override val title: String) : Product
-	class Comics(override val title: String) : Product
-	class Ebooks(override val title: String) : Product
-	class Game(override val title: String) : Product
+	companion object {
+		fun fromId(id: String) = values().first { it.id == id }
+	}
 }
