@@ -1,27 +1,28 @@
 package dev.johnbrainard.groupees.groupeesbrowser.groupees
 
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.net.URL
 
 const val GROUPEES_URL = "https://groupees.com"
 
-class GroupeesPage private constructor(private val document: Document) {
+class GroupeesPage private constructor(
+	private val document: Document,
+	private val pageLoader: PageLoader
+) {
 
-	fun getBundleElements(): List<BundleElement> {
+	fun getBundles(): List<BundleTile> {
 		return document.select(".default-bundles .default-bundle")
-			.map { BundleElement(it) }
+			.map { BundleTile(it) }
 	}
 
 	companion object {
-		fun open(): GroupeesPage {
-			val document = Jsoup.parse(URL(GROUPEES_URL), 10_000)
-			return GroupeesPage(document)
+		fun open(pageLoader: PageLoader): GroupeesPage {
+			val document = pageLoader.loadPage("")
+			return GroupeesPage(document, pageLoader)
 		}
 	}
 
-	class BundleElement internal constructor(private val element: Element) {
+	inner class BundleTile internal constructor(private val element: Element) {
 		val name: String
 			get() = element.selectFirst("a")?.attr("href")!!
 
@@ -29,15 +30,19 @@ class GroupeesPage private constructor(private val document: Document) {
 			get() = element.selectFirst(".bundle-info h2")
 				?.text()!!
 
-		val endsOn: String?
-			get() = element.selectFirst(".time")
-				?.attr("data-final-time")
-
 		val platform: String?
 			get() = element.selectFirst(".platforms-list img")
 				?.attr("title")
 
 		val productDetails: String?
 			get() = element.selectFirst(".products")?.text()
+
+		val bundle: BundlePage
+			get() = BundlePage(pageLoader.loadPage(name))
+	}
+
+	inner class BundlePage internal constructor(private val document: Document) {
+		val endsOn: String = document.selectFirst(".time")
+			?.attr("data-final-time")!!
 	}
 }
